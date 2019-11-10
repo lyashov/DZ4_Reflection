@@ -2,7 +2,7 @@ import java.util.HashMap;
 
 /**
  * Class Student contains "ForClear" fields. They fields need's clear.
- * Fields old, name, rating, groupName need's
+ * Fields old, name, rating, groupName need's is printing
  */
 public class Student{
     int oldForClear;

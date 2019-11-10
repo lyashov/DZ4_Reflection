@@ -1,7 +1,4 @@
-import javax.activation.MailcapCommandMap;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 /**
@@ -13,7 +10,6 @@ import java.util.Set;
 операции - для списка fieldsToCleanup удалить ключи из мапы, для fieldsToOutput вывести в консоль значения, хранящиеся в мапе.
 При отсутствии в объекте/мапе нузных полей/ключей - падать с IllegalArgumentException, оставив объект неизменным.
 * */
-
 public class DoCleanup {
     private static void setDefaultValue(Field field, Object object) throws IllegalAccessException {
         /*short = 0
@@ -55,7 +51,13 @@ public class DoCleanup {
         }
     }
 
-    static void cleanupMap(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) {
+    /**
+     * Delete map's element by key "fieldsToCleanup" 2. sout fieldsToOutput
+     * @param object
+     * @param fieldsToCleanup
+     * @param fieldsToOutput
+     */
+    private static void cleanupMap(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) {
         for (String fieldForClean : fieldsToCleanup) {
             Map map = (Map) object;
             String st = (String) map.remove(fieldForClean);
@@ -72,18 +74,19 @@ public class DoCleanup {
             }
         }
     }
-
-    static void cleanupObject(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) throws IllegalAccessException, NoSuchFieldException {
+    /**
+     * Clear fieldsToCleanup 2. sout fieldsToOutput
+     * @param object
+     * @param fieldsToCleanup
+     * @param fieldsToOutput
+     */
+    private static void cleanupObject(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) throws IllegalAccessException, NoSuchFieldException {
         for (String fieldForClean : fieldsToCleanup) {
             Field field = object.getClass().getDeclaredField(fieldForClean);
             if (!field.isAccessible()) field.setAccessible(true);
             if (field.getType().isPrimitive()) {
                 setDefaultValue(field, object);
-            } else {
-                if (field.get(object) instanceof Map) {
-                    ((Map) field.get(object)).clear();
-                } else field.set(object, null);
-            }
+            } else field.set(object, null);
         }
 
         for (String fieldForOutput : fieldsToOutput) {
@@ -99,14 +102,15 @@ public class DoCleanup {
     }
 
     /**
-     * If parametr №1 is object, then
+     * If parameter №1 is object, then 1. clear fieldsToCleanup 2. sout fieldsToOutput
+     * If parameter №1 is map, then 1. delete map's element by key "fieldsToCleanup" 2. sout fieldsToOutput
      * @param object some class or hashmap
      * @param fieldsToCleanup fields for clean
      * @param fieldsToOutput fields for output
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
-    static void cleanup(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) throws NoSuchFieldException, IllegalAccessException {
+    public static void cleanup(Object object, Set<String> fieldsToCleanup, Set<String> fieldsToOutput) throws NoSuchFieldException, IllegalAccessException {
         if (object instanceof Map)
             cleanupMap(object, fieldsToCleanup, fieldsToOutput);
         else
